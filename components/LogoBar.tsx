@@ -1,35 +1,4 @@
-// const partners = [
-//   { name: "Google Partner", sub: "Google" },
-//   { name: "Meta Business Partner", sub: "Meta" },
-//   { name: "Microsoft Advertising", sub: "Microsoft" },
-//   { name: "TikTok Marketing Partner", sub: "TikTok" },
-//   { name: "HubSpot Partner", sub: "HubSpot" },
-//   { name: "Shopify Partners", sub: "Shopify" },
-//   { name: "WordPress", sub: "WordPress" },
-//   { name: "Clutch", sub: "Clutch" },
-// ];
-
-// export default function LogoBar() {
-//   const list = [...partners, ...partners];
-//   return (
-//     <section className="border-y border-black/5 bg-white py-8">
-//       <div className="mx-auto max-w-7xl overflow-hidden px-5 lg:px-8">
-//         <div className="flex w-max animate-marquee items-center gap-16">
-//           {list.map((p, i) => (
-//             <div key={i} className="flex shrink-0 flex-col items-center gap-0.5 opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0">
-//               <span className="text-lg font-extrabold tracking-tight text-ink">
-//                 {p.sub}
-//               </span>
-//               <span className="text-[9px] font-medium uppercase tracking-wide text-ink/40">
-//                 {p.name.replace(p.sub, "").trim() || "Partner"}
-//               </span>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
+'use client';
 
 import Image from "next/image";
 
