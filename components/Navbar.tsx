@@ -16,14 +16,15 @@ const navLinks = [
       { name: 'DIGITAL MARKETING',          href: '/services/digital-marketing' },
       { name: 'SEARCH ENGINE OPTIMIZATION', href: '/services/seo' },
       { name: 'UI/UX DESIGN',               href: '/services/uiux' },
-      { name: 'VIDEOGRAPHY',                href: '/services/videography' },
-      { name: 'E-COMMERCE',                 href: '/services/e-commerce' },
+      { name: 'VIDEOGRAPHY',                href: '/services/video editing' },
+      { name: 'E-COMMERCE',                 href: '/services/e-commerce & Shopify' },
     ],
   },
   {
     name: 'CASE STUDIES',
     href: '/case-studies',
     subMenu: [
+      { name: 'Website Development',    href: '/case-studies/website-development' },
       { name: 'Social Media Marketing / Meta Ads', href: '/case-studies/social-media-marketing-meta-ads' },
       { name: 'Videography',    href: '/case-studies/videography' },
       { name: 'Graphic Design', href: '/case-studies/graphic-design' },
