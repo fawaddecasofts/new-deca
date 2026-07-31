@@ -131,7 +131,7 @@ export default function ContactFloat() {
       {/* Main Button */}
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-3 bg-[#16987E] hover:bg-[#127d67] text-white rounded-full h-14 px-5 shadow-xl transition-all duration-300 hover:scale-105"
+        className="flex items-center gap-3 bg-[#bf2227] hover:bg-[#bf2227] text-white rounded-full h-13 w-13 px-5 shadow-xl transition-all duration-300 hover:scale-105"
       >
         
 
