@@ -39,7 +39,7 @@ const navLinks = [
       { name: 'SEARCH ENGINE OPTIMIZATION', href: '/courses/seo' },
       { name: 'GRAPHIC DESIGN',             href: '/courses/graphic-designing' },
       { name: 'VIDEO EDITING',                href: '/courses/videography' },
-      { name: 'E-COMMERCE',                 href: '/courses/e-commerce' },
+      { name: 'e-COMMERCE & Shopify',                 href: '/courses/e-commerce' },
     ],
   },
   { name: 'ABOUT US',   href: '/about-us' },
