@@ -122,3 +122,4 @@ Main gains:
   +7  pts — lazy loading + sizes on AboutUs/Projects
   +5  pts — Hero preload + FA async loading
 */
+

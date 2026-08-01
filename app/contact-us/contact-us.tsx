@@ -27,11 +27,46 @@ export default function ContactPage() {
       const L = (window as any).L;
       if (!L || !mapRef.current || mapInstanceRef.current) return;
 
-      const map = L.map(mapRef.current, { scrollWheelZoom: false }).setView([28, 64], 4);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-        maxZoom: 18,
-      }).addTo(map);
+      // Keep attribution required by OpenStreetMap/Esri license, but shrink it
+      // into a tiny, unobtrusive corner instead of removing it entirely.
+      const map = L.map(mapRef.current, {
+        scrollWheelZoom: false,
+        attributionControl: false,
+      }).setView([28, 64], 4);
+
+      L.control.attribution({ prefix: false, position: "bottomright" }).addTo(map);
+
+      // --- Base layers ---
+      // Esri World Imagery = satellite view (default)
+      const satelliteLayer = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        { attribution: "Tiles &copy; Esri", maxZoom: 18 }
+      );
+
+      // Esri reference layer adds place-name labels (in English) on top of satellite imagery
+      const satelliteLabels = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+        { attribution: "", maxZoom: 18 }
+      );
+
+      const satelliteGroup = L.layerGroup([satelliteLayer, satelliteLabels]);
+
+      // CartoDB Voyager = street/street-labels view, rendered with English place names
+      const streetLayer = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        { attribution: "&copy; OpenStreetMap &copy; CARTO", maxZoom: 20, subdomains: "abcd" }
+      );
+
+      // Default to satellite view
+      satelliteGroup.addTo(map);
+
+      L.control
+        .layers(
+          { Satellite: satelliteGroup, Streets: streetLayer },
+          {},
+          { position: "topright" }
+        )
+        .addTo(map);
 
       L.marker([25.2048, 55.2708]).addTo(map).bindPopup("UAE Office");
       L.marker([31.4504, 73.0751]).addTo(map).bindPopup("Pakistan Office");
@@ -151,12 +186,32 @@ export default function ContactPage() {
         .loc-detail-row svg { flex-shrink: 0; margin-top: 0.15rem; color: ${RED}; }
         .view-map-btn { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(191,34,39,0.08); color: ${RED}; border: none; padding: 0.6rem 1rem; border-radius: 6px; font-weight: 700; font-size: 0.82rem; cursor: pointer; text-decoration: none; margin-top: 0.5rem; }
         .view-map-btn:hover { background: rgba(191,34,39,0.15); }
-        .map-frame-wrap { border-radius: 12px; overflow: hidden; width: 100%; height: 100%; min-height: 260px; }
+        .map-frame-wrap { border-radius: 12px; overflow: hidden; width: 100%; height: 100%; min-height: 260px; position: relative; }
         .map-frame-wrap img { border: 0; display: block; width: 100%; height: 100%; }
 
-        .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; max-width: 1200px; margin: 0 auto; }
+        /* Shrink the required map attribution into a tiny, low-key corner mark */
+        .map-frame-wrap .leaflet-control-attribution {
+          font-size: 8px;
+          padding: 0 3px;
+          background: rgba(255,255,255,0.55);
+          line-height: 1.2;
+          opacity: 0.6;
+        }
+        .map-frame-wrap .leaflet-control-attribution a { color: #888; }
+        .map-frame-wrap .leaflet-control-layers {
+          font-size: 0.78rem;
+          border-radius: 6px;
+          overflow: hidden;
+        }
+
+        .services-card { max-width: 1200px; margin: 0 auto; background: ${WHITE}; border: 1px solid ${BORDER}; border-radius: 20px; padding: 2.2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+        .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
         .services-img { border-radius: 12px; overflow: hidden; height: 340px; }
         .services-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .services-text { padding-right: 100px; }
+        .support-badge { position: absolute; top: -46px; right: -10px; width: 90px; height: 90px; }
+        .support-badge-chat { position: absolute; top: -6px; right: -6px; width: 24px; height: 24px; border-radius: 50%; background: ${RED}; color: ${WHITE}; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
 
         .hero-section { padding: 5rem 6% 4rem; }
         .locations-section { padding: 5rem 6%; }
@@ -167,6 +222,8 @@ export default function ContactPage() {
           .services-grid { grid-template-columns: 1fr; gap: 2rem; }
           .loc-grid { grid-template-columns: 1fr; }
           .services-img { height: 260px; }
+          .services-text { padding-right: 0; }
+          .support-badge { position: static; margin-bottom: 1.2rem; }
         }
 
         @media (max-width: 600px) {
@@ -177,6 +234,7 @@ export default function ContactPage() {
           .loc-office-card { padding: 1.1rem; }
           .map-frame-wrap { min-height: 220px; }
           .services-img { height: 220px; }
+          .services-card { padding: 1.2rem; border-radius: 14px; }
         }
 
         @media (max-width: 400px) {
@@ -211,7 +269,7 @@ export default function ContactPage() {
                   <div>
                     <div style={{ fontWeight: 700, fontSize: "0.86rem" }}>UAE</div>
                     <a href="tel:+971559411204" style={{ color: RED, fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>+971 55 941 1204</a>
-                    <div style={{ color: GRAY_TEXT, fontSize: "0.8rem" }}>ceodecasoft@gmail.com</div>
+                    <div style={{ color: GRAY_TEXT, fontSize: "0.8rem" }}>marketing@decasofts.com</div>
                   </div>
                   <a href="tel:+971559411204" className="call-btn" aria-label="Call UAE office">
                     <PhoneIcon />
@@ -356,7 +414,7 @@ export default function ContactPage() {
                 </div>
                 <div className="loc-detail-row"><LocationIcon /><span>Dubai Municipality Building, Salah Al Din Street, Block A, 2nd floor, Office no 23, Al Muraqabat, Deira, Dubai</span></div>
                 <div className="loc-detail-row"><PhoneIconGray /><span>+971 55 941 1204</span></div>
-                <div className="loc-detail-row"><MailIcon /><span>ceodecasoft@gmail.com</span></div>
+                <div className="loc-detail-row"><MailIcon /><span>marketing@decasofts.com</span></div>
                 <a
                   className="view-map-btn"
                   href="https://www.google.com/maps/search/?api=1&query=Dubai+Municipality+Building+Salah+Al+Din+Street+Deira+Dubai"
@@ -386,7 +444,7 @@ export default function ContactPage() {
               </div>
 
               <div className="map-frame-wrap">
-                <div ref={mapRef} style={{ width: "100%", height: "100%", minHeight: 260 }} />
+                <div ref={mapRef} style={{ width: "100%", height: "100%", minHeight: 260, zIndex: "1" }} />
               </div>
             </div>
           </div>
@@ -394,25 +452,47 @@ export default function ContactPage() {
 
         {/* ══ SERVICES CTA ══ */}
         <section className="services-section" style={{ background: LIGHT_BG }}>
-          <div className="services-grid">
-            <div className="services-img">
-              <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80" alt="Team analyzing business data" />
-            </div>
-            <div style={{ position: "relative" }}>
-              <p style={{ color: RED, fontWeight: 700, fontSize: "0.82rem", marginBottom: "0.6rem" }}>Our Services</p>
-              <h2 style={{ fontSize: "clamp(1.5rem, 2.5vw, 2rem)", fontWeight: 800, lineHeight: 1.25, marginBottom: "1rem", color: DARK }}>
-                We provide the best service for your business
-              </h2>
-              <p style={{ color: GRAY_TEXT, lineHeight: 1.85, fontSize: "0.93rem", marginBottom: "1.8rem" }}>
-                From web development to digital marketing, we offer a complete range of services to help your business grow.
-              </p>
-              <a href="/services" className="send-btn" style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", width: "auto", padding: "0.85rem 1.6rem", textDecoration: "none" }}>
-                EXPLORE SERVICES <ArrowIcon />
-              </a>
-              <div style={{ position: "absolute", top: "8%", right: 0, width: 74, height: 74, borderRadius: "50%", border: `1.5px dashed ${RED}`, display: "flex", alignItems: "center", justifyContent: "center", color: RED }}>
-                <HeadsetIcon />
-                <div style={{ position: "absolute", top: -8, right: -10, width: 30, height: 30, borderRadius: "50%", background: RED, color: WHITE, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.15)" }}>
-                  <ChatIcon />
+          <div className="services-card">
+            <div className="services-grid">
+              <div className="services-img">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80" alt="Team analyzing business data" />
+              </div>
+              <div className="services-text" style={{ position: "relative" }}>
+                <p style={{ color: RED, fontWeight: 700, fontSize: "0.82rem", marginBottom: "0.6rem" }}>Our Services</p>
+                <h2 style={{ fontSize: "clamp(1.5rem, 2.5vw, 2rem)", fontWeight: 800, lineHeight: 1.25, marginBottom: "1rem", color: DARK }}>
+                  We provide the best service for your business
+                </h2>
+                <p style={{ color: GRAY_TEXT, lineHeight: 1.85, fontSize: "0.93rem", marginBottom: "1.8rem" }}>
+                  From web development to digital marketing, we offer a complete range of services to help your business grow.
+                </p>
+                <a href="/services" className="send-btn" style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", width: "auto", padding: "0.85rem 1.6rem", textDecoration: "none" }}>
+                  EXPLORE SERVICES <ArrowIcon />
+                </a>
+
+                <div className="support-badge">
+                  <svg viewBox="0 0 100 100" width="100" height="100">
+                    <circle cx="50" cy="50" r="46" fill="none" stroke={RED} strokeWidth="1.5" strokeDasharray="4 4" />
+                    <g stroke={RED} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="50" cy="42" r="11" />
+                      <path d="M32 72c0-11 8-18 18-18s18 7 18 18" />
+                      <path d="M30 46a20 20 0 0 1 40 0" />
+                      <path d="M30 46v9a4 4 0 0 0 4 4h1a3 3 0 0 0 3-3v-8a3 3 0 0 0-3-3h-5z" />
+                      <path d="M70 46v9a4 4 0 0 1-4 4h-1a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3h5z" />
+                      <path d="M62 55v3a6 6 0 0 1-6 6h-2" />
+                    </g>
+                    <g transform="translate(4,68)">
+                      <circle r="12" cx="12" cy="12" fill={WHITE} stroke={RED} strokeWidth="1.5" />
+                      <g stroke={RED} strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" transform="translate(12,12)">
+                        <circle r="4.2" />
+                        {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
+                          <line key={deg} x1="0" y1="-6.5" x2="0" y2="-8.5" transform={`rotate(${deg})`} />
+                        ))}
+                      </g>
+                    </g>
+                  </svg>
+                  <div className="support-badge-chat">
+                    <ChatIcon />
+                  </div>
                 </div>
               </div>
             </div>

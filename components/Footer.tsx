@@ -8,15 +8,15 @@ const services = [
   { name: 'Web Development',            href: '/services/web-development' },
   { name: 'Digital Marketing',          href: '/services/digital-marketing' },
   { name: 'Search Engine Optimization', href: '/services/seo' },
-  { name: 'Videography',                href: '/services/videography' },
+  { name: 'Video Editing',                href: '/services/videography' },
   { name: 'E-Commerce',                 href: '/services/e-commerce' },
 ]
 const courses = [
   { name: 'Web Development',            href: '/courses/web-development' },
   { name: 'Digital Marketing',          href: '/courses/digital-marketing' },
   { name: 'Search Engine Optimization', href: '/courses/seo' },
-  { name: 'Videography',                href: '/courses/videography' },
-  { name: 'E-Commerce',                 href: '/courses/e-commerce' },
+  { name: 'Video Editing',                href: '/courses/videography' },
+  { name: 'e-Commerce & Shopify',                 href: '/courses/e-commerce' },
 ]
 const company = [
   { name: 'Home',         href: '/' },

@@ -108,3 +108,4 @@ export default function CardPaymentForm({ amount }: { amount: number }) {
     </form>
   );
 }
+

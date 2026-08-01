@@ -5,7 +5,6 @@ import { Analytics } from '@vercel/analytics/react'
 import WhatsappFloat from '@/components/WhatsappFloat'
 import "hover.css/css/hover-min.css";
 
-
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800', '900'],
@@ -51,4 +50,6 @@ export default function RootLayout({
       </body>
     </html>
   )
+  
 }
+
